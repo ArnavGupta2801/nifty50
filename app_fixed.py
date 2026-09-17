@@ -9,7 +9,7 @@ from streamlit_autorefresh import st_autorefresh
 st.set_page_config(page_title="Nifty 50 Live Heatmap", layout="wide")
 
 REFRESH_INTERVAL_SECONDS = 60
-API_BASE = "http://127.0.0.1:8787"
+API_BASE = " https://arnavnifty50.workers.dev"
 
 NIFTY50 = {
     "Adani Enterprises": "ADANIENT",
