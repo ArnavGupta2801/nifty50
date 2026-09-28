@@ -73,7 +73,7 @@ def get_color(pct_change):
     else:
         return "#8B1A1A"
 SECTORS = {
-    "All Stocks": list(NIFTY50.values()),
+    "Nifty 50": list(NIFTY50.values()),
 
     "Banks": [
         "AXISBANK",
