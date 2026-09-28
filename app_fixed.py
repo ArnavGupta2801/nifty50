@@ -1,4 +1,3 @@
-
 import time
 import requests
 import pandas as pd
@@ -55,7 +54,7 @@ NIFTY50 = {
     "Sun Pharma": "SUNPHARMA",
     "Tata Consultancy Services": "TCS",
     "Tata Consumer Products": "TATACONSUM",
-    "Tata Motors (Passenger Vehicles)": "TMPV",
+    "Tata Motors": "TATAMOTORS",
     "Tata Steel": "TATASTEEL",
     "Tech Mahindra": "TECHM",
     "Titan Company": "TITAN",
@@ -73,11 +72,87 @@ def get_color(pct_change):
         return "#F5A9A9"
     else:
         return "#8B1A1A"
+SECTORS = {
+    "All Stocks": list(NIFTY50.values()),
 
+    "Banks": [
+        "AXISBANK",
+        "HDFCBANK",
+        "ICICIBANK",
+        "KOTAKBANK",
+        "SBIN"
+    ],
+
+    "Financial Services": [
+        "BAJFINANCE",
+        "BAJAJFINSV",
+        "JIOFIN",
+        "SBILIFE",
+        "SHRIRAMFIN",
+        "HDFCLIFE"
+    ],
+
+    "IT": [
+        "INFY",
+        "TCS",
+        "WIPRO",
+        "HCLTECH",
+        "TECHM"
+    ],
+
+    "Oil & Gas": [
+        "RELIANCE",
+        "ONGC"
+    ],
+
+    "Auto": [
+        "MARUTI",
+        "M&M",
+        "BAJAJ-AUTO",
+        "TATAMOTORS"
+    ],
+
+    "Healthcare": [
+        "APOLLOHOSP",
+        "CIPLA",
+        "DRREDDY",
+        "MAXHEALTH",
+        "SUNPHARMA"
+    ],
+
+    "Metals": [
+        "ADANIENT",
+        "HINDALCO",
+        "JSWSTEEL",
+        "TATASTEEL",
+        "COALINDIA"
+    ],
+
+    "Consumer Goods": [
+        "ASIANPAINT",
+        "HINDUNILVR",
+        "ITC",
+        "NESTLEIND",
+        "TATACONSUM"
+    ],
+
+    "Infrastructure": [
+        "LT",
+        "POWERGRID",
+        "ADANIPORTS",
+        "NTPC",
+        "ULTRACEMCO"
+    ],
+
+    "Retail & Lifestyle": [
+        "TRENT",
+        "TITAN"
+    ]
+}
 @st.cache_data(ttl=60)
-def fetch_nifty50_data():
+def fetch_nifty50_data(selected_sector):
     try:
-        symbols = [f"{s}.NS" for s in NIFTY50.values()]
+        symbols = [f"{s}.NS" for s in SECTORS[selected_sector]]
         response = requests.get(
             f"{API_BASE}/stock/list",
             params={"symbols": ",".join(symbols), "res": "num"},
@@ -121,11 +196,12 @@ def build_heatmap(df):
     return fig
 
 def main():
-    st.title("📊 Nifty 50 Live Heatmap")
+    selected_sector = st.sidebar.selectbox("📂 Select Sector", list(SECTORS.keys()))
+    st.title(f"📊 {selected_sector} Heatmap")
 
     st_autorefresh(interval=REFRESH_INTERVAL_SECONDS * 1000, key="refresh")
 
-    df = fetch_nifty50_data()
+    df = fetch_nifty50_data(selected_sector)
 
     if df.empty:
         st.error("No data returned from API. Make sure npm run dev is running.")
